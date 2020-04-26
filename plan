@@ -1,0 +1,17 @@
+So this is going to be my plan for secret hitler
+
+Dependencies:
+	enum34
+	PyInquirer
+
+First iteration: Let's just implement the bare minimum, for keeping track of everything. So that I could like screen share this
+instead of Sam having to get out his board. For this, we need:
+	Card Dealing / Tracking
+	Card play tracking
+	Failed election tracking
+	Role tracking
+	If electing Hitler will end the game
+	Elegibility for being elected
+	Policy peeking (showing but not dealing)
+	Player removal (assassination)
+	Veto Power
