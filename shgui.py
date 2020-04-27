@@ -218,7 +218,7 @@ def nominateChancellor(isSpecialElection):
                 input('Click any key when you are ready to quit.')
                 quit(' '*int((columns - len('THANKS FOR PLAYING!')) / 2) + 'THANKS FOR PLAYING!')
             else:
-                input('%s is NOT hitler! Be careful, though, they could still be a fascist...' % newChancellor)
+                input('%s is NOT hitler! Be careful, though, they could still be a fascist. Press enter to continue...' % newChancellor)
 
         return True
     else:
@@ -292,7 +292,7 @@ def choosePolicies(selectedCards):
     discard.append(pCards.l if cardsToShow[firstRemoveCard] == sh_utils.playedLiberalCard else pCards.f)
     del cardsToShow[firstRemoveCard]
     
-    input("President, close your eyes, hit enter, and tell your chancellor to open their eyes.")
+    input("President, hit enter FIRST, close your eyes, and then tell your chancellor to open their eyes.")
     os.system('cls' if os.name == 'nt' else 'clear')
     input("Chancellor, once you are the only one with your eyes open, hit enter.")
 
@@ -310,7 +310,7 @@ def choosePolicies(selectedCards):
         {
             'type': 'checkbox',
             'qmark': '>',
-            'message': 'Select Card to Drop',
+            'message': 'Select Card to Drop. If veto power has been enacted, you may select zero to propose a veto.',
             'name': 'drop',
             'choices': [
                 {
@@ -327,6 +327,20 @@ def choosePolicies(selectedCards):
 
     secondRemoveCard = prompt(chanRemoveCard)['drop']
     while len(secondRemoveCard) != 1:
+        if govHasVetoPower is True and len(secondRemoveCard) == 0:
+            sureToVeto = [
+                {
+                    'type': 'confirm',
+                    'name': 'veto',
+                    'message': 'Ask the President if they would also like to veto. If they say yes, then you may veto. If no, you must choose. What did they say?'
+                }
+            ]
+
+            presWantsVeto = prompt(sureToVeto)['veto']
+            if presWantsVeto is True:
+                return sh_utils.blankCard
+            else:
+                print('Veto failed.')
         print("Please select one, and only one option, to drop.")
         secondRemoveCard = prompt(chanRemoveCard)['drop']
 
@@ -384,13 +398,17 @@ def murderPlayer(president):
     else:
         endStr += ' They were not Hitler. You do not know whether they were a fascist or a liberal.'
         print(endStr)
-
+    
 def previewCards():
     input('Everybody close your eyes except for the current president. President, hit a key once you are the only oen with your eyes open.')
     pCardsToShow = []
     outStr = 'The top 3 cards are a '
     for i in range(3):
-        pCardsToShow.append(random.randint(0, len(deck) - 1))
+        appendNum = random.randint(0, len(deck) - 1)
+        while appendNum in pCardsToShow:
+            appendNum = random.randint(0, len(deck) - 1)
+        else:
+            pCardsToShow.append(appendNum)
     for n, c in enumerate(pCardsToShow):
         selectedCards[n] = c
     # selectedCards = cardsToShow
@@ -467,7 +485,6 @@ def specialElection():
                 discard.remove(i)
         if failedElections == 3:
             forcePlayCard()
-        currentPres += 1
         input("Press enter when you are ready to continue...")
         return
     
@@ -491,9 +508,11 @@ def specialElection():
         elif action == 'murder':
             lastAction = 'murder'
             murderPlayer(newPresident)
+            currentPres -= 1 # Since the number of players decreased by 1
         elif action == 'veto':
             lastAction = 'veto'
             murderPlayer()
+            currentPres -= 1 # Since the number of players decreased by 1
             print("The Government now has the power to veto.")
             govHasVetoPower = True
             input("Press enter when you are ready to continue...")
@@ -562,7 +581,18 @@ for i in players:
         input('%s, once you are the only one with your eyes open, please press enter.' % players[players.index(i) + 1])
     else:
         input('%s, hit any key once you are ready to start the game' % i)
-        
+
+os.system('cls' if os.name == 'nt' else 'clear')
+
+if numPlayers < 7:
+    print('This next part requires some coordination. Everybody, close your eyes and nominate somebody to count to 20, but fascists and Hitler, reopen your eyes after 2 seconds.')
+    print('Find the other fascists, identify them, then close your eyes once everybody has been identified. Reopen them once the nominated person has announced that they have reached 20 seconds. Or, if you don\'t like this, do it your own way.')
+    input('Once everyone has their eyes back open, hit any key')
+else:
+    print('This next part requires some coordination. Everybody, stick out your fist, nominate somebody to count to 20, and close your eyes, but fascists EXCLUDING Hitler, reopen your eyes after 2 seconds.')
+    print('Find the other fascists and identify them. Hitler, once everyone\'s eyes are closed, put out your thumb and wiggle it so that all the fascists can see.')
+    print('Fascists, once you have identified yourselves and Hitler, close your eyes. Reopen them once the nominated person has announced that they have reached 20 seconds. Or, if you don\'t like this, do it your own way.')
+    input('Once everyone has their eyes back open, hit any key')
 
 os.system('cls' if os.name == 'nt' else 'clear')
 askIfNeedInstructions()
@@ -575,6 +605,7 @@ while True:
     passed = nominateChancellor(False)
     if passed is True:
         previousGov['president'] = players[currentPres]
+        failedElections = 0
     else:
         failedElections += 1
         if len(deck) < 3:
@@ -583,7 +614,6 @@ while True:
                 discard.remove(i)
         if failedElections == 3:
             forcePlayCard()
-        currentPres += 1
         input("Press enter when you are ready to continue...")
         continue
     
@@ -607,9 +637,11 @@ while True:
         elif action == 'murder':
             lastAction = 'murder'
             murderPlayer(players[currentPres])
+            currentPres -= 1 # Since the number of players decreased by 1
         elif action == 'veto':
             lastAction = 'veto'
             murderPlayer(players[currentPres])
+            currentPres -= 1 # Since the number of players decreased by 1
             print("The Government now has the power to veto.")
             govHasVetoPower = True
             input("Press enter when you are ready to continue...")
