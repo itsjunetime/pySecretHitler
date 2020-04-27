@@ -11,7 +11,8 @@ def chooseHitler(playerArray):
     if num_bad == -1:
         print("You have too few players to play this game.")
 
-    hitler = random.randint(0, len(players) - 1)
+    hitler = players[random.randint(0, len(players) - 1)]
+   
     return hitler
 
 def chooseFascists(players, hitler):
@@ -21,9 +22,9 @@ def chooseFascists(players, hitler):
 
     for num in range(0, num_bad):
         newFascist = random.randint(0, len(players) - 1)
-        while newFascist == hitler or players[newFascist] in fascists:
+        while players[newFascist] == hitler or players[newFascist] in fascists:
             newFascist = random.randint(0, len(players) - 1)
         else:
-            fascists.append(newFascist)
+            fascists.append(players[newFascist])
     
     return fascists

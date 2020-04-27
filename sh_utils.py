@@ -10,7 +10,8 @@ class tcolors:
         ENDC = '\033[0m'
         BOLD = '\033[1m'
         UNDERLINE = '\033[4m'
- 
+        WHITE = '\033[37m'
+
 class actions:
         cards = 'cards'
         murder = 'murder'
@@ -145,36 +146,36 @@ fascistElectionCard = ("""
 cardWidth = 13 #Find another way to make this dynamic
 cardHeight = blankCard.count('\n')
 
-def checkIfAction(numFascists, numPlayers):
+def checkIfAction(numFascists, numPlayers, lastAction):
     fascistsPlayed = numFascists
-    if fascistsPlayed == 5:
-        return actions.veto
+    if fascistsPlayed == 5 and lastAction != 'veto':
+        return 'veto'
     elif fascistsPlayed == 6:
-        return actions.end
+        return 'end'
     if numPlayers < 7:
         if fascistsPlayed < 3:
-            return actions.none
-        elif fascistsPlayed == 3:
-            return actions.cards
-        elif fascistsPlayed == 4:
-            return actions.murder
+            return 'none'
+        elif fascistsPlayed == 3 and lastAction != 'cards':
+            return 'cards'
+        elif fascistsPlayed == 4 and lastAction != 'murder':
+            return 'murder'
     elif numPlayers < 9:
         if fascistsPlayed < 2:
-            return actions.none
-        elif fascistsPlayed == 2:
-            return actions.view
-        elif fascistsPlayed == 3:
-            return actions.cards
-        elif fascistsPlayed == 4:
-            return actions.murder
+            return 'none'
+        elif fascistsPlayed == 2 and lastAction != 'view':
+            return 'view'
+        elif fascistsPlayed == 3 and lastAction != 'cards':
+            return 'cards'
+        elif fascistsPlayed == 4 and lastAction != 'murder':
+            return 'murder'
     else:
-        if fascistsPlayed == 1:
-            return actions.view
-        elif fascistsPlayed == 2:
-            return actions.view
-        elif fascistsPlayed == 3:
-            return actions.election
-        elif fascistsPlayed == 4:
-            return actions.murder
+        if fascistsPlayed == 1 and lastAction != 'view1':
+            return 'view1'
+        elif fascistsPlayed == 2 and lastAction != 'view':
+            return 'view'
+        elif fascistsPlayed == 3 and lastAction != 'election':
+            return 'election'
+        elif fascistsPlayed == 4 and lastAction != 'murder':
+            return 'murder'
     return 'none'
 

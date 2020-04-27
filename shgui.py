@@ -19,11 +19,12 @@ fascistsPlayed = 0
 liberalsPlayed = 0
 failedElections = 0
 govHasVetoPower = False
-previousGov = {'president': int(), 'chancellor': int()} # This will be ints to reference the player array. It references the previous government until the new chancellor is elected, then it references them until the next chancellor is elected.
+previousGov = {'president': str(), 'chancellor': str()} # This will be ints to reference the player array. It references the previous government until the new chancellor is elected, then it references them until the next chancellor is elected.
 
-currentPres = 0 # References players array
-
+currentPres = -1 # References players array. Starts at -1 since it is incremented immediately.
+selectedCards = [0, 0, 0]
 cardAnnouncement = "The card that has been played is..."
+lastAction = ''
 
 def getPlayers():
     questions = [
@@ -38,7 +39,12 @@ def getPlayers():
 
     newPlayer = prompt(questions)
     while newPlayer["playerName"] != "quit":
-        players.append(newPlayer["playerName"])
+        if newPlayer['playerName'] not in players and len(newPlayer['playerName']) != 0:
+            players.append(newPlayer["playerName"])
+        elif newPlayer['playerName'] in players:
+            print('%s is already in the game. Please choose a new one' % newPlayer['playerName'])
+        elif len(newPlayer['playerName']) == 0:
+            print('Please enter a name or quit.')
         newPlayer = prompt(questions)
 
     return players
@@ -172,7 +178,7 @@ def printLiberalCards():
 
     print(liberalString)
 
-def nominateChancellor():
+def nominateChancellor(isSpecialElection):
 
     chancellorChooser  = [
         {
@@ -184,10 +190,12 @@ def nominateChancellor():
 
     newChancellor = prompt(chancellorChooser)['chancellor']
     
-    while newChancellor not in players or newChancellor == players[previousGov['chancellor']] or newChancellor == players[previousGov['president']] or newChancellor == players[currentPres]:
+    while newChancellor not in players or newChancellor == previousGov['chancellor'] or newChancellor == previousGov['president'] or newChancellor == players[currentPres]:
         if newChancellor not in players:
             print("%s is not a player in the current game. Choose a new one." % newChancellor)
         else:
+            if isSpecialElection is True:
+                break
             print("%s is not eligible to be chancellor. Choose a new one." % newChancellor)
         newChancellor = prompt(chancellorChooser)['chancellor']
     
@@ -202,42 +210,51 @@ def nominateChancellor():
 
     passed = prompt(didTheyPass)['passed']
     if passed is True:
-        previousGov['chancellor'] = players.index(newChancellor)
+        previousGov['chancellor'] = newChancellor
+
+        if fascistsPlayed >= 3:
+            if newChancellor == hitler:
+                print('Unfortunately, you just fell right into Hitler\'s trap. You elected Hitler as your chancellor. LIBERALS, you have lost! And FASCISTS, you have won!')
+                input('Click any key when you are ready to quit.')
+                quit(' '*int((columns - len('THANKS FOR PLAYING!')) / 2) + 'THANKS FOR PLAYING!')
+            else:
+                input('%s is NOT hitler! Be careful, though, they could still be a fascist...' % newChancellor)
+
         return True
     else:
         return False
 
-
-def choosePolicies():
+def choosePolicies(selectedCards):
     cardWidth = sh_utils.cardWidth
     cardHeight = sh_utils.cardHeight
-    
-    confirmPresEyes = [
-        {
-            'type': 'confirm',
-            'name': 'onlyPresLooking',
-            'message': 'Everybody close your eyes until only the current president is looking. President, once you are the only one with your eyes open, click enter.',
-            'default': True
-        }
-    ]
 
-    prompt(confirmPresEyes)
+    input('Everybody close your eyes until only the current president is looking. President, once you are the only one with your eyes open, click enter.')
+
     cardsToShow = []
     cardSeparator = '     '
     numberSeparator = ' '*int(cardWidth + len(cardSeparator) - 2)
     policyCards = ("""""")
     marginFromSide = ((columns - (3 * cardWidth) - (2 * len(cardSeparator))) / 2)
-    for i in range(3):
-        card = deck.pop(random.randint(0, len(deck) - 1))
-        if card == pCards.f:
-            cardsToShow.append(sh_utils.playedFascistCard)
-        elif card == pCards.l:
-            cardsToShow.append(sh_utils.playedLiberalCard)
-    
+    if selectedCards == [0, 0, 0]:
+        for i in range(3):
+            card = deck.pop(random.randint(0, len(deck) - 1))
+            if card == pCards.f:
+                cardsToShow.append(sh_utils.playedFascistCard)
+            elif card == pCards.l:
+                cardsToShow.append(sh_utils.playedLiberalCard)
+    else:
+        # print('entered else in choose policies')
+        for c in selectedCards:
+            # print('c: ' + str(c))
+            card = deck.pop(c)
+            # print('card: ' + 'l' if card == pCards.l else 'f')
+            if card == pCards.f:
+                cardsToShow.append(sh_utils.playedFascistCard)
+            elif card == pCards.l:
+                cardsToShow.append(sh_utils.playedLiberalCard)
+
     print(' '*int(marginFromSide + (cardWidth / 2)) + '0' + numberSeparator + '1' + numberSeparator + '2')
     for i in range(cardHeight):
-        # for c in cardsToShow:
-            # policyCards += c.splitlines()[i]
         policyCards += ' '*int(marginFromSide)
         policyCards += cardsToShow[0].splitlines()[i] + cardSeparator
         policyCards += cardsToShow[1].splitlines()[i] + cardSeparator
@@ -275,16 +292,10 @@ def choosePolicies():
     discard.append(pCards.l if cardsToShow[firstRemoveCard] == sh_utils.playedLiberalCard else pCards.f)
     del cardsToShow[firstRemoveCard]
     
-    confirmChanEyes = [
-        {
-            'type': 'confirm',
-            'name': 'onlyChanLooking',
-            'message': 'President, close your eyes and tell your chancellor to open their eyes. Chancellor, once you are the only one with your eyes open, hit enter.',
-            'default': True,
-        }
-    ]
+    input("President, close your eyes, hit enter, and tell your chancellor to open their eyes.")
+    os.system('cls' if os.name == 'nt' else 'clear')
+    input("Chancellor, once you are the only one with your eyes open, hit enter.")
 
-    prompt(confirmChanEyes)
     policyCards = ("""""")
     print(' '*int((columns - 2 - len(numberSeparator)) / 2) + '0' + numberSeparator + '1')
     for i in range(cardHeight):
@@ -323,12 +334,17 @@ def choosePolicies():
 
     discard.append(pCards.l if cardsToShow[sRemoveCard] == sh_utils.playedLiberalCard else pCards.f)
     del cardsToShow[sRemoveCard]
+    selectedCards = [0, 0, 0]
 
     return cardsToShow[0]
                 
 def forcePlayCard():
     input("You have failed your election 3 times. A card will be force played. Click to continue.")
-    newCardNum = random.randint(0, len(deck) - 1)
+    if selectedCards == [0, 0, 0]:
+        newCardNum = random.randint(0, len(deck) - 1)
+    else:
+        newCardNum = selectedCards[0]
+        
     newCard = deck.pop(newCardNum)
     if newCard == pCards.f:
         fascistsPlayed += 1
@@ -336,10 +352,179 @@ def forcePlayCard():
     else:
         liberalsPlayed += 1
         input(sh_utils.tcolors.OKBLUE + '\n\nThe card was a LIBERAL!')
+    selectedCards[0] = random.randint(0, len(deck) - 1)
 
+def murderPlayer(president):
+    
+    print("Due to the last fascist policy card that was passed, the current president must now kill a player.")
+    murder = [
+        {
+            'type': 'input',
+            'name': 'player',
+            'message': 'Please type in the name of a character to murder.'
+        }
+    ]
+
+    deadGuy = prompt(murder)['player']
+    while deadGuy not in players or deadGuy == president:
+        if deadGuy not in players:
+            print('%s is not a real player. Please enter someone who is currently playing' % deadGuy)
+        elif deadGuy == president:
+            print('You cannot kill yourself. Choose again')
+        deadGuy = prompt(murder)['player']
+    
+    players.remove(deadGuy)
+    endStr = deadGuy + ' is now dead.'
+    if deadGuy == hitler:
+        endStr += ' They were HITLER. Good job liberals, you won!'
+        print(endStr)
+        input("Hit enter once you are ready to quit")
+        print('\n\n' + ' '*int((columns - len('THANKS FOR PLAYING!')) / 2) + 'THANKS FOR PLAYING!')
+        quit(' ')
+    else:
+        endStr += ' They were not Hitler. You do not know whether they were a fascist or a liberal.'
+        print(endStr)
+
+def previewCards():
+    input('Everybody close your eyes except for the current president. President, hit a key once you are the only oen with your eyes open.')
+    pCardsToShow = []
+    outStr = 'The top 3 cards are a '
+    for i in range(3):
+        pCardsToShow.append(random.randint(0, len(deck) - 1))
+    for n, c in enumerate(pCardsToShow):
+        selectedCards[n] = c
+    # selectedCards = cardsToShow
+    # for n, i in enumerate(pCardsToShow):
+    for n, i in enumerate(selectedCards):
+        if deck[i] == pCards.f:
+            outStr += sh_utils.tcolors.FAIL + 'FASCIST' + sh_utils.tcolors.WHITE
+        elif deck[i] == pCards.l:
+            outStr += sh_utils.tcolors.OKBLUE + 'LIBERAL' + sh_utils.tcolors.WHITE
+        if n == 0:
+            outStr += ', a '
+        elif n == 1:
+            outStr += ', and a '
+        else:
+            outStr += '.'
+    print(outStr)
+    input('Hit enter when you have memorized these and are ready to continue')
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def viewLoyalty():
+    playerChoice = [
+       {
+           'type': 'input',
+           'name': 'loyalty',
+           'message': 'Please choose whose loyalty you would like to view'
+        }
+    ]
+
+    chosenPlayer = prompt(playerChoice)['loyalty']
+    while chosenPlayer == players[currentPres] or chosenPlayer not in players:
+        if chosenPlayer == players[currentPres]:
+            print("You may not choose yourself")
+        elif chosenPlayer not in players:
+            print("%s is not an existing player." % chosenPlayer)
+        chosenPlayer = prompt(playerChoice)['loyalty']
+
+    input("Everybody close your eyes except for the current president. Click enter once everybody else has closed their eyes.")
+
+    print("%s is a ....." % chosenPlayer)
+    outStr = ' '*int((columns - len('LIBERAL')) / 2) # Since liberal and fascist have the same number of characters
+    if chosenPlayer == hitler or chosenPlayer in fascists:
+        outStr += sh_utils.tcolors.FAIL + 'FASCIST'
+    else:
+        outStr += sh_utils.tcolors.OKBLUE + 'LIBERAL'
+
+    print(outStr)
+
+def specialElection():
+    newPres = [
+        {
+            'type': 'input',
+            'name': 'president',
+            'message': 'Current President, please choose who will be the next president. They can be anyone besides yourself; rules of eligibility do not apply in a special election.'
+        }
+    ]
+
+    newPresident = prompt(newPres)['president']
+    if newPresident == players[currentPres] or newPresident not in players:
+        if newPresident == players[currentPres]:
+            print('You cannot choose yourself. Please choose again.')
+        if newPresident not in players:
+            print('%s is not a real player. Please choose again.' % newPresident)
+        newPresident = prompt(newPres)['president']
+    
+    input('%s, you are the new president. The regular order of government will continue once your turn is over. Hit enter to continue.')
+    passed = nominateChancellor(True)
+    if passed is True:
+        previousGov['president'] = players[currentPres]
+    else:
+        failedElections += 1
+        if len(deck) < 3:
+            for i in discard:
+                deck.append(i)
+                discard.remove(i)
+        if failedElections == 3:
+            forcePlayCard()
+        currentPres += 1
+        input("Press enter when you are ready to continue...")
+        return
+    
+    cardToPlay = choosePolicies(selectedCards)
+    
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+    print(' '*int((columns - len(cardAnnouncement)) / 2) + cardAnnouncement)
+    if cardToPlay == sh_utils.playedFascistCard:
+        print('\n\n' + ' '*int((columns - len('FASCIST')) / 2) + sh_utils.tcolors.FAIL + 'FASCIST' + '\n\n\n')
+        fascistsPlayed += 1
+    else:
+        print('\n\n' + ' '*int((columns - len('LIBERAL')) / 2) + sh_utils.tcolors.OKBLUE + 'LIBERAL' + '\n\n\n')
+        liberalsPlayed += 1
+    
+    if sh_utils.checkIfAction(fascistsPlayed, numPlayers, lastAction) != 'none':
+        action = sh_utils.checkIfAction(fascistsPlayed, numPlayers, lastAction)
+        if action == 'cards':
+            lastAction = 'cards'
+            previewCards()
+        elif action == 'murder':
+            lastAction = 'murder'
+            murderPlayer(newPresident)
+        elif action == 'veto':
+            lastAction = 'veto'
+            murderPlayer()
+            print("The Government now has the power to veto.")
+            govHasVetoPower = True
+            input("Press enter when you are ready to continue...")
+        elif action == 'view':
+            lastAction = 'view'
+            viewLoyalty()
+        elif action == 'view1':
+            lastAction = 'view1'
+            viewLoyalty()
+        elif action == 'end':
+            if fascistsPlayed == 6:
+                endStr = '\nThe ' + sh_utils.tcolors.FAIL + 'FASCISTS' + sh_utils.tcolors.WHITE + 'won. Great job, everyone!'
+            elif liberalsPlayed == 5:
+                endStr = '\nThe ' + sh_utils.tcolors.OKBLUE + 'LIBERALS' + sh_utils.tcolors.WHITE + 'won. Great job, everyone!'
+            print(endStr)
+            input('\n\nPress any key when you are ready to quit...')
+        elif action == 'election':
+            pass
+        else:
+            quit('Something went wrong. Talk to Ian.')
+            
+    # Leave this at the end of this loop
+    input("Hit a key when you are ready to continue...")
+    if len(deck) < 3:
+        for i in discard:
+            deck.append(i)
+            discard.remove(i)
+    
 # Checking Terminal Dimensions
 
-os.system('cls' if os.name == 'nt' else 'clear') # This line is throwing invalid syntax; just run clear &&.
+os.system('cls' if os.name == 'nt' else 'clear')
 termsize = shutil.get_terminal_size((100, 25))
 columns = termsize[0]
 rows = termsize[1]
@@ -355,23 +540,41 @@ print("You will now be asked to input the players. Please note that play will co
 
 players = getPlayers()
 numPlayers = len(players)
-hitlerNum = secret_hitler_role_decider.chooseHitler(players)
-fascistNums = secret_hitler_role_decider.chooseFascists(players, hitlerNum)
-hitler = players[hitlerNum]
-for f in fascistNums:
-    fascists.append(players[f])
+hitler = secret_hitler_role_decider.chooseHitler(players)
+fascists = secret_hitler_role_decider.chooseFascists(players, hitler)
 
-print('\n')
+input('\nEverybody close your eyes except for %s. %s, keep your eyes open and hit enter once everyone else has their eyes closed.' % (players[0], players[0]))
+for i in players:
+    os.system('cls' if os.name == 'nt' else 'clear')
+    playerLine = i + ', you are '
+    playerLine += 'a ' if i != hitler else ''
+    playerLine += sh_utils.tcolors.FAIL if i in fascists or i == hitler else sh_utils.tcolors.OKBLUE
+    if i in fascists:
+        playerLine += 'FASCIST. ' + sh_utils.tcolors.WHITE + 'Your objective is to get 6 fascist policies passed or elect Hitler as chancellor after 3 fascist cards are passed, all while remaining to appear liberal.'
+    elif i == hitler:
+        playerLine += 'HITLER. ' + sh_utils.tcolors.WHITE + 'Your objective is to get 6 fascist policies passed or to get elected as chancellor after 3 fascist cards are passed, all while remaining to appear liberal.'
+    else:
+        playerLine += 'LIBERAL. ' + sh_utils.tcolors.WHITE + 'Your objective is to get 5 liberal policies passed and prevent the dirty fascists from passing their policies or electing Hitler.'
+    print(playerLine)
+    if i != players[-1]:
+        input('%s, please close your eyes and then hit enter and then tell %s to open their eyes. ' % (i, players[players.index(i) + 1]))
+        os.system('cls' if os.name == 'nt' else 'clear')
+        input('%s, once you are the only one with your eyes open, please press enter.' % players[players.index(i) + 1])
+    else:
+        input('%s, hit any key once you are ready to start the game' % i)
+        
 
+os.system('cls' if os.name == 'nt' else 'clear')
 askIfNeedInstructions()
 printDetails()
 
-while True: # Commentin this out to stop an infinite loop for now
+while True: 
+    currentPres = (currentPres + 1) % len(players)
     printDetails()
-    print("It is %s's turn as President. %s, nominate a Chancellor." % (players[currentPres], players[currentPres]))
-    passed = nominateChancellor()
+    print(sh_utils.tcolors.WHITE + "It is %s's turn as President. %s, nominate a Chancellor." % (players[currentPres], players[currentPres]))
+    passed = nominateChancellor(False)
     if passed is True:
-        previousGov['president'] = currentPres
+        previousGov['president'] = players[currentPres]
     else:
         failedElections += 1
         if len(deck) < 3:
@@ -381,44 +584,53 @@ while True: # Commentin this out to stop an infinite loop for now
         if failedElections == 3:
             forcePlayCard()
         currentPres += 1
+        input("Press enter when you are ready to continue...")
         continue
     
-    cardToPlay = choosePolicies()
+    cardToPlay = choosePolicies(selectedCards)
     
+    os.system('cls' if os.name == 'nt' else 'clear')
+
     print(' '*int((columns - len(cardAnnouncement)) / 2) + cardAnnouncement)
     if cardToPlay == sh_utils.playedFascistCard:
-        print('\n\n' + ' '*int((columns - len('FASCIST')) / 2) + sh_utils.tcolors.FAIL + 'FASCIST' + '\n\n\n')
+        print('\n\n' + ' '*int((columns - len('FASCIST')) / 2) + sh_utils.tcolors.FAIL + 'FASCIST' + sh_utils.tcolors.WHITE + '\n\n\n')
         fascistsPlayed += 1
     else:
-        print('\n\n' + ' '*int((columns - len('LIBERAL')) / 2) + sh_utils.tcolors.OKBLUE + 'LIBERAL' + '\n\n\n')
+        print('\n\n' + ' '*int((columns - len('LIBERAL')) / 2) + sh_utils.tcolors.OKBLUE + 'LIBERAL' + sh_utils.tcolors.WHITE + '\n\n\n')
         liberalsPlayed += 1
     
-    if sh_utils.checkIfAction(fascistsPlayed, numPlayers) == 'none':
-        input("Hit a key when you are ready to continue...")
-        currentPres += 1
-        continue
-    else:
-        action = sh_utils.checkIfAction(fascistsPlayed, numPlayers)
+    if sh_utils.checkIfAction(fascistsPlayed, numPlayers, lastAction) != 'none':
+        action = sh_utils.checkIfAction(fascistsPlayed, numPlayers, lastAction)
         if action == 'cards':
-            # Do action here
-            pass
+            lastAction = 'cards'
+            previewCards()
         elif action == 'murder':
-            # Do action here
-            pass
+            lastAction = 'murder'
+            murderPlayer(players[currentPres])
         elif action == 'veto':
-            # Do action here
-            pass
+            lastAction = 'veto'
+            murderPlayer(players[currentPres])
+            print("The Government now has the power to veto.")
+            govHasVetoPower = True
+            input("Press enter when you are ready to continue...")
         elif action == 'view':
-            # Do action here
-            pass
+            lastAction = 'view'
+            viewLoyalty()
+        elif action == 'view1':
+            lastAction = 'view1'
+            viewLoyalty()
         elif action == 'end':
-            # Do action here
-            pass
+            if fascistsPlayed == 6:
+                endStr = '\nThe ' + sh_utils.tcolors.FAIL + 'FASCISTS' + sh_utils.tcolors.WHITE + 'won. Great job, everyone!'
+            elif liberalsPlayed == 5:
+                endStr = '\nThe ' + sh_utils.tcolors.OKBLUE + 'LIBERALS' + sh_utils.tcolors.WHITE + 'won. Great job, everyone!'
+            print(endStr)
+            input('\n\nPress any key when you are ready to quit...')
         elif action == 'election':
-            # Do action here
-            pass
+            lastAction = 'election'
+            specialElection()
         else:
-            quit('Something went wrong. Talk to Ian.')
+            quit('Action was %s. Something went wrong. Talk to Ian.' % action)
             
     # Leave this at the end of this loop
     input("Hit a key when you are ready to continue...")
@@ -426,4 +638,3 @@ while True: # Commentin this out to stop an infinite loop for now
         for i in discard:
             deck.append(i)
             discard.remove(i)
-    currentPres += 1
