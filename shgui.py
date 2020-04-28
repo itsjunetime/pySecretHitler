@@ -244,6 +244,7 @@ def choosePolicies(selectedCards):
                 cardsToShow.append(sh_utils.playedLiberalCard)
     else:
         # print('entered else in choose policies')
+        selectedCards.sort(reverse=True)
         for c in selectedCards:
             # print('c: ' + str(c))
             card = deck.pop(c)
@@ -252,6 +253,7 @@ def choosePolicies(selectedCards):
                 cardsToShow.append(sh_utils.playedFascistCard)
             elif card == pCards.l:
                 cardsToShow.append(sh_utils.playedLiberalCard)
+             
 
     print(' '*int(marginFromSide + (cardWidth / 2)) + '0' + numberSeparator + '1' + numberSeparator + '2')
     for i in range(cardHeight):
@@ -670,3 +672,14 @@ while True:
         for i in discard:
             deck.append(i)
             discard.remove(i)
+
+# except KeyboardInterrupt:
+    # sureToQuit = input("Are you sure you want to quit? [y/n]")
+    # while y not in sureToQuit and n not in sureToQuit:
+        # print("Please input only 'y' or 'n'")
+        # sureToQuit = input("Are you sure you want to quit? [y/n]")
+    # else:
+        # if y in sureToQuit:
+            # quit('Thanks for playing')
+        # else:
+            # pass
