@@ -1,0 +1,24 @@
+https://askubuntu.com/questions/397674/run-scripts-automatically-in-server-after-ssh-connection
+
+So add "ForceCommand /path/to/pyfile.py" into /etc/ssh/sshd_config. Could make that a bash script that only runs if it's the right user so that I can still log into my own account
+
+Ok what if we made a bash file with a bunch a functions to run, then another that was just rw that stored the data, which everyone could read from but only the bash file could read from?
+
+Also, for the time being, I can make a lock file in a directory only writeable by root but readable by everyone so that secret hitler can't start until I'm ready to.
+
+Information that we need to include on the rw file:
+	- Some way to identify the different ssh sessions
+	- player names
+	- num players
+	- who's a fascist
+	- who's hitler
+	- who is the current president
+	- who is the current chancellor
+	- who was the last president
+	- who was the last chancellor
+	- cards in the deck
+	- cards in the discard
+	- how many fascist cards have been played so far
+	- how many liberal cards have been played so far
+	- what the last action was (murder, cards, loyalty, special election, etc.)
+	- num of failed elections

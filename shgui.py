@@ -322,8 +322,7 @@ def choosePolicies(selectedCards):
                     'name': '1'
                 },
             ],
-            'validate': lambda answer: "Please only choose one option" \
-                    if len(answer) != 1 else True
+            'validate': lambda answer: "Please only choose one option" if len(answer) != 1 else True
         }
     ]
 
@@ -627,9 +626,11 @@ while True:
     if cardToPlay == sh_utils.playedFascistCard:
         print('\n\n' + ' '*int((columns - len('FASCIST')) / 2) + sh_utils.tcolors.FAIL + 'FASCIST' + sh_utils.tcolors.WHITE + '\n\n\n')
         fascistsPlayed += 1
-    else:
+    elif cardToPlay == sh_utils.playedLiberalCard:
         print('\n\n' + ' '*int((columns - len('LIBERAL')) / 2) + sh_utils.tcolors.OKBLUE + 'LIBERAL' + sh_utils.tcolors.WHITE + '\n\n\n')
         liberalsPlayed += 1
+    elif cardToPlay == sh_utils.blankCard:
+        print('\n\n' + ' '*int((columns - len('VETOED')) / 2) + sh_utils.tcolors.OKGREEN + 'VETOED' + sh_utils.tcolors.WHITE + '\n\n\n')
     
     if sh_utils.checkIfAction(fascistsPlayed, numPlayers, lastAction) != 'none':
         action = sh_utils.checkIfAction(fascistsPlayed, numPlayers, lastAction)
