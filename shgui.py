@@ -508,12 +508,14 @@ def specialElection():
             previewCards()
         elif action == 'murder':
             lastAction = 'murder'
+            prevPresident = players[currentPres]
             murderPlayer(newPresident)
-            currentPres -= 1 # Since the number of players decreased by 1
+            currentPres = players.index(prevPresident) # To make sure that it increments correctly
         elif action == 'veto':
             lastAction = 'veto'
-            murderPlayer()
-            currentPres -= 1 # Since the number of players decreased by 1
+            prevPresident = players[currentPres]
+            murderPlayer(newPresident)
+            currentPres = players.index(prevPresident) # To make sure that it increments correctly
             print("The Government now has the power to veto.")
             govHasVetoPower = True
             input("Press enter when you are ready to continue...")
@@ -639,12 +641,14 @@ while True:
             previewCards()
         elif action == 'murder':
             lastAction = 'murder'
+            prevPresident = players[currentPres]
             murderPlayer(players[currentPres])
-            currentPres -= 1 # Since the number of players decreased by 1
+            currentPres = players.index(prevPresident) # To make sure that it will correctly increment at restart of the loop
         elif action == 'veto':
             lastAction = 'veto'
+            prevPresident = players[currentPres]
             murderPlayer(players[currentPres])
-            currentPres -= 1 # Since the number of players decreased by 1
+            currentPres = players.index(prevPresident) # Since the number of players decreased by 1
             print("The Government now has the power to veto.")
             govHasVetoPower = True
             input("Press enter when you are ready to continue...")
