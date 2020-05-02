@@ -24,4 +24,13 @@ Information that we need to include on the rw file:
 	- num of failed elections
 	- if the government has veto power
 	- Probably a string with the rules lol
-	- 
+
+Ok looks like this above section may not be the way to go after all, since the server appears to only support RSA keys.. can't help everyone load those in; also don't want to
+
+Looks like a django web app may be the way to go; works with sqlite databases by default. Could just edit and read from that.
+Interface would just be the hard part to set up correctly...
+
+Could make a data() class or something like that; could hold all the default settings and just create everything there that I need and necessary functions to edit what needs to be edited.
+
+Also should probably make a player() class, with functions that are basically wrappers for settings functions; just cause OOP ya know
+ 
