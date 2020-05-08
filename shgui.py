@@ -401,10 +401,14 @@ def murderPlayer(president):
         print(endStr)
     
 def previewCards():
-    input('Everybody close your eyes except for the current president. President, hit a key once you are the only oen with your eyes open.')
+    input('Everybody close your eyes except for the current president. President, hit a key once you are the only one with your eyes open.')
     pCardsToShow = []
     outStr = 'The top 3 cards are a '
     for i in range(3):
+        if len(deck) < 3:
+            for i in discard:
+                deck.append(i)
+                discard.remove(i)
         appendNum = random.randint(0, len(deck) - 1)
         while appendNum in pCardsToShow:
             appendNum = random.randint(0, len(deck) - 1)
