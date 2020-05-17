@@ -7,9 +7,10 @@ Ok what if we made a bash file with a bunch a functions to run, then another tha
 Also, for the time being, I can make a lock file in a directory only writeable by root but readable by everyone so that secret hitler can't start until I'm ready to.
 
 Information that we need to include on the rw file:
-	- Some way to identify the different ssh sessions
-	- player names
-	- num players
+	- Some way to identify the different ssh sessions: bash -c "who --lookup | cut -d \" \" -f7"
+		Each time someone runs the script, it needs to run "who --lookup | cut -d \" \" -f7", log the results as an array, then find which entry of the array hasn't been registered yet, and use that as its id.
+	- player names: associate with session id
+	- num players: Increment each time a new ssh session is registered
 	- who's a fascist
 	- who's hitler
 	- who is the current president
@@ -34,3 +35,5 @@ Could make a data() class or something like that; could hold all the default set
 
 Also should probably make a player() class, with functions that are basically wrappers for settings functions; just cause OOP ya know
  
+Nah we're doing port forwarding my guy
+
