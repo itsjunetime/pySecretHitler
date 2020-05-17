@@ -258,8 +258,11 @@ def choosePolicies(selectedCards):
     print(' '*int(marginFromSide + (cardWidth / 2)) + '0' + numberSeparator + '1' + numberSeparator + '2')
     for i in range(cardHeight):
         policyCards += ' '*int(marginFromSide)
+        policyCards += sh_utils.tcolors.OKBLUE if cardsToShow[0] == sh_utils.playedLiberalCard else sh_utils.tcolors.FAIL
         policyCards += cardsToShow[0].splitlines()[i] + cardSeparator
+        policyCards += sh_utils.tcolors.OKBLUE if cardsToShow[1] == sh_utils.playedLiberalCard else sh_utils.tcolors.FAIL
         policyCards += cardsToShow[1].splitlines()[i] + cardSeparator
+        policyCards += sh_utils.tcolors.OKBLUE if cardsToShow[2] == sh_utils.playedLiberalCard else sh_utils.tcolors.FAIL
         policyCards += cardsToShow[2].splitlines()[i] + '\n'
     print(policyCards)
     
@@ -304,7 +307,9 @@ def choosePolicies(selectedCards):
         # for c in cardsToShow:
             # policyCards += c.splitlines()[i]
         policyCards += ' '*int((columns - (2 * cardWidth) - len(cardSeparator)) / 2)
+        policyCards += sh_utils.tcolors.OKBLUE if cardsToShow[0] == sh_utils.playedLiberalCard else sh_utils.tcolors.FAIL
         policyCards += cardsToShow[0].splitlines()[i] + cardSeparator
+        policyCards += sh_utils.tcolors.OKBLUE if cardsToShow[1] == sh_utils.playedLiberalCard else sh_utils.tcolors.FAIL
         policyCards += cardsToShow[1].splitlines()[i] + '\n'
     print(policyCards)
 
@@ -502,7 +507,7 @@ def specialElection():
         print('\n\n' + ' '*int((columns - len('FASCIST')) / 2) + sh_utils.tcolors.FAIL + 'FASCIST' + '\n\n\n')
         fascistsPlayed += 1
     else:
-        print('\n\n' + ' '*int((columns - len('LIBERAL')) / 2) + sh_utils.tcolors.OKBLUE + 'LIBERAL' + '\n\n\n')
+        print('\n\n' + ' '*int((columns - len('LIBERAL')) / 2) + sh_utils.tcolors.OKBLUE + 'LIBERiAL' + '\n\n\n')
         liberalsPlayed += 1
     
     if sh_utils.checkIfAction(fascistsPlayed, numPlayers, lastAction) != 'none':
@@ -539,7 +544,7 @@ def specialElection():
         elif action == 'election':
             pass
         else:
-            quit('Something went wrong. Talk to Ian.')
+            quit('Something went wrong. Action returned something that was not previously defined.')
             
     # Leave this at the end of this loop
     input("Hit a key when you are ready to continue...")
