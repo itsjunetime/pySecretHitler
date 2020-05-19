@@ -1,20 +1,33 @@
-[{"Stats": 
-    {
-        "players": [
-        ],
-        "current_president": "",
-        "current_chancellor": "",
-        "last_president": "",
-        "last_chancellor": "",
-        "deck": [
-           "l", "l", "l", "l", "l", "l", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f"
-        ],
-        "discard": [
-        ],
-        "played_fascists": "",
-        "played_liberals": "",
-        "last_action": "",
-        "failed_elections": "",
-        "veto_enabled": "false",
-        }
-}]
+{
+    "current_chancellor": "",
+    "current_president": "",
+    "deck": [
+        "l",
+        "l",
+        "l",
+        "l",
+        "l",
+        "l",
+        "f",
+        "f",
+        "f",
+        "f",
+        "f",
+        "f",
+        "f",
+        "f",
+        "f",
+        "f",
+        "f"
+    ],
+    "discard": [],
+    "failed_elections": "",
+    "game_started": "false",
+    "last_action": "",
+    "last_chancellor": "",
+    "last_president": "",
+    "played_fascists": "",
+    "played_liberals": "",
+    "players": [],
+    "veto_enabled": "false"
+}
