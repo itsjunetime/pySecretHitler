@@ -72,6 +72,13 @@ def getValue(key):
         json_data = json.load(f)
         return json_data[key]
 
-
+def getBoardSize():
+    num_players = len(getValue('players'))
+    if num_players < 7:
+        return 's'
+    elif num_players < 9:
+        return 'm'
+    else:
+        return 'l'
 # insert("last_action", "")
 # print(threePolicies())

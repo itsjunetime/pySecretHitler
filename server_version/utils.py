@@ -180,3 +180,26 @@ def checkIfAction(numFascists, numPlayers, lastAction):
             return 'murder'
     return 'none'
 
+def getCard(name):
+    if name == 'blank':
+        return blankCard
+    elif name == 'fascist':
+        return playedFascistCard
+    elif name == 'liberal':
+        return playedLiberalCard
+    elif name == 'fascist_end':
+        return fascistEndCard
+    elif name == 'liberal_end':
+        return liberalEndCard
+    elif name == 'veto':
+        return fascistVetoCard
+    elif name == 'murder':
+        return fascistMurderCard
+    elif name == 'loyalty':
+        return fascistViewCard
+    elif name == 'election':
+        return fascistElectionCard
+    elif name == 'peek':
+        return fascistPeekCard
+    else:
+        print("yeah something went wrong my guy.")
