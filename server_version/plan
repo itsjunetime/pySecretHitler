@@ -37,3 +37,29 @@ Also should probably make a player() class, with functions that are basically wr
  
 Nah we're doing port forwarding my guy
 
+
+ORGANIZATION:
+	je.py:
+		- change singular value in stats
+		- read singular value in stats
+		- remove three values from deck
+		- insert value to discard
+	sh.py
+		- Determine player affiliations
+		- Ask if they need instructions
+		- Print after-turn details
+			- Print deck & discard
+			- Print fascist cards
+			- Print failed elections
+			- Print liberal cards
+		- Print any number of cards
+		- Nominate chancellor
+		- Choose policies
+		- Forceplay a card
+		- Murder a player
+		- Preview cards
+		- View loyalty
+		- Go through special election
+		- One turn
+		- Capture it all in try to capture ctrl+c
+		- Capture ctrl+r  to restart turn with the new, edited stats.json if we need to.
