@@ -44,7 +44,10 @@ ORGANIZATION:
 		- read singular value in stats
 		- remove three values from deck
 		- insert value to discard
+		- Set all players to not ready
+		- Return if all players are ready or not (True = all are ready)
 	sh.py
+		- Allow someone to join as spectator or player
 		- Determine player affiliations
 		- Ask if they need instructions
 		- Print after-turn details
@@ -54,6 +57,7 @@ ORGANIZATION:
 			- Print liberal cards
 		- Print any number of cards
 		- Nominate chancellor
+			- prompt player to vote yes or no
 		- Choose policies
 		- Forceplay a card
 		- Murder a player
@@ -62,4 +66,4 @@ ORGANIZATION:
 		- Go through special election
 		- One turn
 		- Capture it all in try to capture ctrl+c
-		- Capture ctrl+r  to restart turn with the new, edited stats.json if we need to.
+		- Capture ctrl+r to restart turn with the new, edited stats.json if we need to.

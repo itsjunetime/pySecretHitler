@@ -32,6 +32,31 @@ def insert(key, val):
     time.sleep(1)
     unlock()
 
+def playersAreReady():
+    are_ready = True
+    with open('stats.json', 'r') as f:
+        json_data = json.load(f)
+        for i in json_data['players'].values():
+            if i['is_ready'] is False:
+                are_ready = False
+            
+    return are_ready
+
+def setPlayersNotReady():
+    if lock() is False:
+        quit('Something went locking je. Game cannot accurately continue.')
+    else:
+        with open('stats.json', 'r+') as f:
+            json_data = json.load(f)
+            for i in json_data['players'].values()
+                i['is_ready'] = False
+            f.seek(0)
+            f.write(json.dumps(json_data, indent=4, sort_keys=True))
+            f.truncate()
+    unlock()
+
+
+
 # def getDeck():
 #     with open('stats.json', 'r') as f:
 #         json_data = json.load(f)

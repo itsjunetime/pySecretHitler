@@ -10,32 +10,33 @@ os.system('cls' if os.name == 'nt' else 'clear')
 rows = shutil.get_terminal_size((100, 25))[1]
 columns = shutil.get_terminal_size((100, 25))[0]
 
+players = []
+
 def printCentered(str):
     print(' '*int((columns - len(str)) / 2) + str)
-    
 
-def getPlayers():
-    questions = [
-        {
-            'type': 'input',
-            'name': 'playerName',
-            'message': 'Inpur a new player name (input \'quit\' when done)',
-        }
-    ]
+# def getPlayers():
+#     questions = [
+#         {
+#             'type': 'input',
+#             'name': 'playerName',
+#             'message': 'Inpur a new player name (input \'quit\' when done)',
+#         }
+#     ]
+# 
+#     new_players = []
+# 
+#     new_player = prompt(questions)
+#     while new_player['playerName'] != 'quit':
+#         if new_player['playerName'] not in new_players and len(new_player['playerName']) != 0:
+#             new_players.append(new_player['playerName'])
+#         elif new_player['playerName'] in new_players:
+#             print('%s is already in the game. Please choose a new one.' % new_player['playerName'])
+#         elif len(new_player['playerName']) == 0:
+#             print('Please enter a name or quit')
+#         new_player = prompt(questions)
 
-    players = []
-
-    newPlayer = prompt(questions)
-    while newPlayer['playerName'] != 'quit':
-        if newPlayer['playerName'] not in players and len(newPlayer['playerName']) != 0:
-            players.append(newPlayer['playerName'])
-        elif newPlayer['playerName'] in players:
-            print('%s is already in the game. Please choose a new one.' % newPlayer['playerName'])
-        elif len(newPlayer['playerName']) == 0:
-            print('Please enter a name or quit')
-        newPlayer = prompt(questions)
-
-    return players
+#     players = new_players
 
 def askIfNeedInstructions():
     questions = [
@@ -165,7 +166,58 @@ def printLiberals():
         liberal_string += total_line + '\n'
 
     print(liberal_string)
-    
 
-printDetails()
+def nominateChancellor(is_special_election):
+
+    chancellor_chooser = [
+        {
+            'type': 'input',
+            'name': 'chancellor',
+            'message': 'Type in the name of the chancellor that you chose: ',
+        }
+    ]
+
+    new_chancellor = prompt(chancellor_chooser)['chancellor']
+
+    while new_chancellor not in players or new_chancellor == je.getValue('last_chancellor') or new_chancellor == je.getValue('last_president') or new_chancellor == je.getValue('current_president'):
+        if new_chancellor not in players:
+            print("%s is not a player in the current game. Choose a new one. " % new_chancellor)
+        else:
+            if is_special_election is True:
+                break
+            print("%s is not eligible to be chancellor. Choose a new one. " % new_chancellor)
+        new_chancellor = prompt(chancellor_chooser)['chancellor']
+
+    if_passed = [
+        {
+            'type': 'confirm',
+            'message': 'Let the rest of the players vote now on if they want this player as their chancellor. Did the vote pass?',
+            'name': 'passed',
+            'default': True,
+        }
+    ]
+
+    passed = prompt(if_passed)['passed']
+
+    if passed is True:
+        je.insert('current_chancellor', new_chancellor)
+
+        if je.getValue('failed_elections') >= 3:
+            if je.getValue('players')[new_chancellor]['personal_loyalty'] == 'hitler':
+                printCentered('Unfortunately, you just fell right into Hitler\'s trap. You elected Hitler as chancellor')
+                input('Click any key when you are ready to quit.')
+                quit(' '*int((columns - len('THANKS FOR PLAYING!')) / 2) + 'THANKS FOR PLAYING!')
+            else:
+                input('%s is NOT hitler! Be careful, though, they could still be a fascist. Press enter to continue...')
+        
+        return True
+    else:
+        je.insert('failed_elections', je.getValue('failed_elections') + 1)
+        return False
+
+# players = je.getValue('players')
+
+# nominateChancellor(False)
+# printDetails()
 # print(int((rows - len(str)) / 2))
+

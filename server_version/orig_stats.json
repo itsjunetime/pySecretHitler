@@ -22,8 +22,8 @@
     ],
     "discard": [],
     "failed_elections": 0,
-    "game_started": "false",
-    "is_special_election": "false",
+    "game_started": false,
+    "is_special_election": false,
     "last_action": "",
     "last_chancellor": "",
     "last_president": "",
@@ -31,7 +31,7 @@
     "played_fascists": 0,
     "played_liberals": 0,
     "players": [],
-    "veto_enabled": "false",
+    "veto_enabled": false,
 	"fascist_cards": {
 		"s": [
 			"blank",
