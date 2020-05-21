@@ -215,9 +215,9 @@ def nominateChancellor(is_special_election):
         je.insert('failed_elections', je.getValue('failed_elections') + 1)
         return False
 
-# players = je.getValue('players')
+players = je.getValue('players')
 
-# nominateChancellor(False)
-# printDetails()
+nominateChancellor(False)
+printDetails()
 # print(int((rows - len(str)) / 2))
 

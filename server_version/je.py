@@ -48,7 +48,7 @@ def setPlayersNotReady():
     else:
         with open('stats.json', 'r+') as f:
             json_data = json.load(f)
-            for i in json_data['players'].values()
+            for i in json_data['players'].values():
                 i['is_ready'] = False
             f.seek(0)
             f.write(json.dumps(json_data, indent=4, sort_keys=True))
