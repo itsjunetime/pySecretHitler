@@ -1,0 +1,69 @@
+https://askubuntu.com/questions/397674/run-scripts-automatically-in-server-after-ssh-connection
+
+So add "ForceCommand /path/to/pyfile.py" into /etc/ssh/sshd_config. Could make that a bash script that only runs if it's the right user so that I can still log into my own account
+
+Ok what if we made a bash file with a bunch a functions to run, then another that was just rw that stored the data, which everyone could read from but only the bash file could read from?
+
+Also, for the time being, I can make a lock file in a directory only writeable by root but readable by everyone so that secret hitler can't start until I'm ready to.
+
+Information that we need to include on the rw file:
+	- Some way to identify the different ssh sessions: bash -c "who --lookup | cut -d \" \" -f7"
+		Each time someone runs the script, it needs to run "who --lookup | cut -d \" \" -f7", log the results as an array, then find which entry of the array hasn't been registered yet, and use that as its id.
+	- player names: associate with session id
+	- num players: Increment each time a new ssh session is registered
+	- who's a fascist
+	- who's hitler
+	- who is the current president
+	- who is the current chancellor
+	- who was the last president
+	- who was the last chancellor
+	- cards in the deck (in order, use shuffle function at the very beginning and then pop them in order)
+	- cards in the discard
+	- how many fascist cards have been played so far
+	- how many liberal cards have been played so far
+	- what the last action was (murder, cards, loyalty, special election, etc.)
+	- num of failed elections
+	- if the government has veto power
+	- Probably a string with the rules lol
+
+Ok looks like this above section may not be the way to go after all, since the server appears to only support RSA keys.. can't help everyone load those in; also don't want to
+
+Looks like a django web app may be the way to go; works with sqlite databases by default. Could just edit and read from that.
+Interface would just be the hard part to set up correctly...
+
+Could make a data() class or something like that; could hold all the default settings and just create everything there that I need and necessary functions to edit what needs to be edited.
+
+Also should probably make a player() class, with functions that are basically wrappers for settings functions; just cause OOP ya know
+ 
+Nah we're doing port forwarding my guy
+
+
+ORGANIZATION:
+	je.py:
+		- change singular value in stats
+		- read singular value in stats
+		- remove three values from deck
+		- insert value to discard
+		- Set all players to not ready
+		- Return if all players are ready or not (True = all are ready)
+	sh.py
+		- Allow someone to join as spectator or player
+		- Determine player affiliations
+		- Ask if they need instructions
+		- Print after-turn details
+			- Print deck & discard
+			- Print fascist cards
+			- Print failed elections
+			- Print liberal cards
+		- Print any number of cards
+		- Nominate chancellor
+			- prompt player to vote yes or no
+		- Choose policies
+		- Forceplay a card
+		- Murder a player
+		- Preview cards
+		- View loyalty
+		- Go through special election
+		- One turn
+		- Capture it all in try to capture ctrl+c
+		- Capture ctrl+r to restart turn with the new, edited stats.json if we need to.
